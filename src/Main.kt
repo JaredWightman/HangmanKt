@@ -1,3 +1,5 @@
+// First Kotlin project, using this to learn the syntax.
+
 
 
 // TODO
