@@ -1,14 +1,11 @@
-// First Kotlin project, using this to learn the syntax.
 
-
-
-// TODO
+// TO DO
 // documentation and comments
-// integrate with GIT (new project, MD)
 // figure out creating and reading a text file (spreadsheet?)
-// Hours: 1 (plan/init), 3 (basic structure and game + researching)
+// Hours: 1 (plan/init), 3 (basic structure and game + researching, 1 (wresting GitHub), 1 (polishing markdown and comments),
+//
 
-
+// "Word" class that stores the word, its type, and decides if it will be plural or not if it's a noun
 data class Word(var word: String, val type: String) {
     val plurality = (0..1).random()
 
@@ -26,21 +23,28 @@ val word3 = Word("bake", "Verb")
 val word4 = Word("bat", "Noun")
 val word5 = Word("blubbery", "Adjective")
 
-// Sentence structure: Adjective Noun Verb Adjective Noun
-// One or more of the nouns and verbs will randomly be plural
+
+//////////////////////////////////////
 var initArray = arrayOf(word1, word2, word3, word4, word5)
 var phrase = ""
 
+// Function for setup of structured phrase of random words
 fun selectWords() {
 
-    // Loading up adjectives to pick from
-    var adjArray = mutableListOf<Word>()
+    //File(Words.txt)
+
+
+
+
+
+    // Sorting adjectives into their own array
+    val adjArray = mutableListOf<Word>()
     for (i in initArray) if (i.type == "Adjective") adjArray += i
-    // Loading up nouns to pick from
-    var nounArray = mutableListOf<Word>()
+    // Sorting nouns into their own array
+    val nounArray = mutableListOf<Word>()
     for (i in initArray) if (i.type == "Noun") nounArray += i
-    // Loading up verbs to pick from
-    var verbArray = mutableListOf<Word>()
+    // Sorting verbs into their own array
+    val verbArray = mutableListOf<Word>()
     for (i in initArray) if (i.type == "Verb") verbArray += i
 
     // Adding first adjective
@@ -53,8 +57,8 @@ fun selectWords() {
     nounArray.remove(randomNoun1)
     phrase += randomNoun1.word + " "
 
-    // Adding verb
-    var randomVerb = verbArray.random()
+    // Adding verb and setting it to follow plurality of the first noun
+    val randomVerb = verbArray.random()
     verbArray.remove(randomVerb)
     if (randomNoun1.plurality == 0) {
         randomVerb.word += "s"
@@ -75,37 +79,44 @@ fun selectWords() {
 
 
 fun main() {
-
-    println(initArray)
-    selectWords()
-    println(phrase)
-    println("Hangman! Guess the phrase in the lowest number of letters. \nEach incorrect guess will give a strike. Enter lowercase letters only. \n(Press 1 to exit)\n")
-
+    
+    // Setup of in-terminal prompts and phrase
     var input = ""
     var strikes = 0
-    var shownPhrase = ""
+    selectWords()
+    println(phrase) // remove this////////////////////////////////////////////////////////////////////////////////////
+    println("Hangman! Guess the phrase in the lowest number of letters. \nEach incorrect guess will give a strike. Enter lowercase letters only. \n(Press 1 to exit)\n")
+    
+    // Taking the actual phrase and converting it into a hidden phrase to be printed
+    var hiddenPhrase = ""
     for (char in phrase) {
-        if (char != ' ') {
-            shownPhrase += '_'
+        hiddenPhrase += if (char != ' ') {
+            '_'
         } else {
-            shownPhrase += ' '
+            ' '
         }
     }
-    var ownPhrase = shownPhrase.toMutableList()
+    // Sending underscorified phrase to a list so correctly guessed letters can be added
+    val resultPhrase = hiddenPhrase.toMutableList()
 
+    // Loop for guessing part of hangman
     while (input != "1")
     {
-        ownPhrase.forEach {
+        // Printing all items stored in mutable list for result
+        resultPhrase.forEach {
             print(it)
         }
+
         println()
         input = readLine().toString()
+
+        // Comparing letter input to letters in phrase, editing result to show correct letters and strikes
         if ((input in "a".."z") and (input in phrase) and (input != " "))
         {
             var iterator = 0
             for (char in phrase) {
                 if (char.toString() == input) {
-                    ownPhrase[iterator] = char
+                    resultPhrase[iterator] = char
                 }
                 iterator += 1
             }
@@ -113,7 +124,9 @@ fun main() {
             strikes += 1
             println("Strike! ($strikes)")
         }
-        if ((ownPhrase.contains('_')) == false) {
+
+        // Checking if there are unguessed letters, ending game
+        if (!resultPhrase.contains('_')) {
             println(phrase)
             println("You finished with $strikes strikes!")
             input = "1"

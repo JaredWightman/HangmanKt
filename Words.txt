@@ -1,0 +1,7 @@
+based, Adjective
+boogie, Verb
+broccoli, Noun
+backpack, Noun
+bad, Adjective
+bet, Verb
+bald, Adjective
