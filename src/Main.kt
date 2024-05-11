@@ -1,9 +1,6 @@
+// Jared Wightman Hangman project (Kotlin)
 
-// TO DO
-// documentation and comments
-// figure out creating and reading a text file (spreadsheet?)
-// Hours: 1 (plan/init), 3 (basic structure and game + researching, 1 (wresting GitHub), 1 (polishing markdown and comments),
-//
+import java.io.File
 
 // "Word" class that stores the word, its type, and decides if it will be plural or not if it's a noun
 data class Word(var word: String, val type: String) {
@@ -16,36 +13,26 @@ data class Word(var word: String, val type: String) {
     }
 }
 
-// These words are a temporary placeholder, to get the phrase working.
-val word1 = Word("bean", "Noun")
-val word2 = Word("blue", "Adjective")
-val word3 = Word("bake", "Verb")
-val word4 = Word("bat", "Noun")
-val word5 = Word("blubbery", "Adjective")
-
-
-//////////////////////////////////////
-var initArray = arrayOf(word1, word2, word3, word4, word5)
 var phrase = ""
 
 // Function for setup of structured phrase of random words
 fun selectWords() {
 
-    //File(Words.txt)
-
-
-
-
-
-    // Sorting adjectives into their own array
     val adjArray = mutableListOf<Word>()
-    for (i in initArray) if (i.type == "Adjective") adjArray += i
-    // Sorting nouns into their own array
     val nounArray = mutableListOf<Word>()
-    for (i in initArray) if (i.type == "Noun") nounArray += i
-    // Sorting verbs into their own array
     val verbArray = mutableListOf<Word>()
-    for (i in initArray) if (i.type == "Verb") verbArray += i
+
+    // Going line-by-line and turning each word into an instance of the Word class, then adding to an array for that type
+    File("Words.txt").forEachLine {
+        val segmentedLine = it.split(", ")
+        val word = Word(segmentedLine[0],segmentedLine[1])
+        //if (word.type == "Adjective") adjArray += word
+        when (word.type) {
+            "Adjective" -> adjArray += word
+            "Noun" -> nounArray += word
+            "Verb" -> verbArray += word
+        }
+    }
 
     // Adding first adjective
     val randomAdj1 = adjArray.random()
@@ -74,7 +61,6 @@ fun selectWords() {
     val randomNoun2 = nounArray.random()
     nounArray.remove(randomNoun2)
     phrase += randomNoun2.word + " "
-
 }
 
 
@@ -84,7 +70,6 @@ fun main() {
     var input = ""
     var strikes = 0
     selectWords()
-    println(phrase) // remove this////////////////////////////////////////////////////////////////////////////////////
     println("Hangman! Guess the phrase in the lowest number of letters. \nEach incorrect guess will give a strike. Enter lowercase letters only. \n(Press 1 to exit)\n")
     
     // Taking the actual phrase and converting it into a hidden phrase to be printed
@@ -110,7 +95,7 @@ fun main() {
         println()
         input = readLine().toString()
 
-        // Comparing letter input to letters in phrase, editing result to show correct letters and strikes
+        // Comparing letter input to letters in phrase, editing result to show correct letters
         if ((input in "a".."z") and (input in phrase) and (input != " "))
         {
             var iterator = 0
@@ -121,6 +106,7 @@ fun main() {
                 iterator += 1
             }
         } else {
+            // Tracking and showing strikes
             strikes += 1
             println("Strike! ($strikes)")
         }
